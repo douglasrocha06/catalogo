@@ -14,7 +14,7 @@ def catalogo():
 	try:
 		conn = mysql2.connect() 
 		cursor = conn.cursor(pymysql.cursors.DictCursor)
-		cursor.execute("SELECT id_produtos, produtos, preco, estado, qtd_estoque, tamanho, genero FROM catalogo")
+		cursor.execute("SELECT id_produtos, produtos, preco, estado, qtd_estoque, tamanho, genero FROM api_produtos.catalogo")
 		linha = cursor.fetchall() #Retornará todas as linhas do banco de dados 
 		resposta = jsonify(linha) #Formata em JSON
 		resposta.status_code = 200
@@ -32,7 +32,7 @@ def vizualizar_prod(id):
 	try:
 		conn = mysql2.connect()
 		cursor = conn.cursor(pymysql.cursors.DictCursor)
-		cursor.execute("SELECT id_produtos, produtos, preco, estado, qtd_estoque, tamanho, genero FROM catalogo WHERE id_produtos =%s", id)
+		cursor.execute("SELECT id_produtos, produtos, preco, estado, qtd_estoque, tamanho, genero FROM api_produtos.catalogo WHERE id_produtos =%s", id)
 		linhas = cursor.fetchone() #Retornará apenas uma linha do banco de dados 
 
 		if not linhas:
@@ -54,7 +54,7 @@ def catalogo_ativo():
 	try:
 		conn = mysql2.connect() 
 		cursor = conn.cursor(pymysql.cursors.DictCursor)
-		cursor.execute("select * from catalogo where estado = 'Disponível'")
+		cursor.execute("select * from api_produtos.catalogo where estado = 'Disponível'")
 		linha = cursor.fetchall() #Retornará todas as linhas do banco de dados 
 		resposta = jsonify(linha) #Formata em JSON
 		resposta.status_code = 200
@@ -72,7 +72,7 @@ def catalogo_inativo():
 	try:
 		conn = mysql2.connect() 
 		cursor = conn.cursor(pymysql.cursors.DictCursor)
-		cursor.execute("select * from catalogo where estado = 'Indisponível'")
+		cursor.execute("select * from api_produtos.catalogo where estado = 'Indisponível'")
 		linha = cursor.fetchall() #Retornará todas as linhas do banco de dados 
 		resposta = jsonify(linha) #Formata em JSON
 		resposta.status_code = 200
@@ -90,7 +90,7 @@ def vendas_prod():
 	try:
 		conn = mysql2.connect()
 		cursor = conn.cursor(pymysql.cursors.DictCursor)
-		cursor.execute("select catalogo.id_produtos as id,catalogo.produtos as Produtos, catalogo.preco as Preço, catalogo.qtd_estoque as Qtde_Estoque, catalogo.tamanho as Tamanho, catalogo.genero as Genero, vendas.qtd_venda as Qtde_Venda, date_format(vendas.data_venda, GET_FORMAT(DATE, 'EUR')) as 'Data_Venda' from catalogo join vendas on catalogo.id_produtos = vendas.id_venda order by data_venda")
+		cursor.execute("select catalogo.id_produtos as id,catalogo.produtos as Produtos, catalogo.preco as Preço, catalogo.qtd_estoque as Qtde_Estoque, catalogo.tamanho as Tamanho, catalogo.genero as Genero, vendas.qtd_venda as Qtde_Venda, date_format(vendas.data_venda, GET_FORMAT(DATE, 'EUR')) as 'Data_Venda' from api_produtos.catalogo join vendas on catalogo.id_produtos = vendas.id_venda order by data_venda")
 		linhas = cursor.fetchall() #Retornará apenas uma linha do banco de dados 
 		resposta = jsonify(linhas) #Formata em JSON
 		resposta.status_code = 200
@@ -108,7 +108,7 @@ def vizu_venda_prod(id):
 	try:
 		conn = mysql2.connect()
 		cursor = conn.cursor(pymysql.cursors.DictCursor)
-		cursor.execute("select catalogo.id_produtos as id,catalogo.produtos as Produtos,catalogo.preco as Preço, catalogo.qtd_estoque as Qtde_Estoque,catalogo.tamanho as Tamanho,catalogo.genero as Genero,vendas.qtd_venda as Qtde_Venda, date_format(vendas.data_venda, GET_FORMAT(DATE, 'EUR')) as 'Data_Venda' from catalogo join vendas on catalogo.id_produtos = vendas.id_produtos where catalogo.id_produtos = %s order by data_venda", id)
+		cursor.execute("select catalogo.id_produtos as id,catalogo.produtos as Produtos,catalogo.preco as Preço, catalogo.qtd_estoque as Qtde_Estoque,catalogo.tamanho as Tamanho,catalogo.genero as Genero,vendas.qtd_venda as Qtde_Venda, date_format(vendas.data_venda, GET_FORMAT(DATE, 'EUR')) as 'Data_Venda' from api_produtos.catalogo join vendas on catalogo.id_produtos = vendas.id_produtos where catalogo.id_produtos = %s order by data_venda", id)
 		linhas = cursor.fetchall() #Retornará apenas uma linha do banco de dados 
 		if not linhas:
 		    return jsonify({'status':'Venda inexistente!'}), 404
@@ -135,7 +135,7 @@ def adicionar_prod():
 		tamanho = json['tamanho']
 		genero = json['genero']
 		if produtos and preco and estado and qtd_estoque and tamanho and genero and request.method == 'POST':
-			sqlQuery = "INSERT INTO catalogo(produtos, preco, estado, qtd_estoque, tamanho, genero) VALUES(%s, %s, %s, %s, %s, %s)"
+			sqlQuery = "INSERT INTO api_produtos.catalogo(produtos, preco, estado, qtd_estoque, tamanho, genero) VALUES(%s, %s, %s, %s, %s, %s)"
 			dados = (produtos, preco, estado, qtd_estoque, tamanho, genero)
 			conn = mysql2.connect() #Conexão com banco de dados
 			cursor = conn.cursor(pymysql.cursors.DictCursor)
@@ -166,7 +166,7 @@ def atualizar_prod():
 		tamanho = json['tamanho']
 		genero = json['genero']
 		if produtos and preco and estado and qtd_estoque and tamanho and genero and id_produtos and request.method == 'PUT':
-			sqlQuery = "UPDATE catalogo SET produtos=%s, preco=%s, estado=%s, qtd_estoque=%s, tamanho=%s, genero=%s WHERE id_produtos=%s"
+			sqlQuery = "UPDATE api_produtos.catalogo SET produtos=%s, preco=%s, estado=%s, qtd_estoque=%s, tamanho=%s, genero=%s WHERE id_produtos=%s"
 			dados = (produtos, preco, estado, qtd_estoque, tamanho, genero, id_produtos)
 			conn = mysql2.connect() #Conexão banco de dados 
 			cursor = conn.cursor()
@@ -207,4 +207,4 @@ def not_found(error=None):
     return respone
 		
 if __name__ == "__main__":
-    app2.run(debug=True, port=5200)
+    app2.run(debug=True, host="0.0.0.0", port=80)
