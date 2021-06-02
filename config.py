@@ -1,6 +1,6 @@
 import pymysql.cursors
 import pymysql
-from app import app, app2, app3
+from app import app
 from flaskext.mysql import MySQL
 
 mysql2 = MySQL()
